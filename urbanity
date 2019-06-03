@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+require 'colorize'
+require 'net/http'
+require 'tty-progressbar'
+
+DONE      = 'DONE'.colorize(:green)
+ERROR     = 'ERROR'.colorize(:red)
+FINISHED  = 'DOWNLOAD FINISHED'.colorize(:blue)
+
+def print_help
+  exemple = '191049'.colorize(:green)
+
+  puts  "Usage: urbanity [ID]\n\n" \
+        "Exemple:\n" \
+        "https://nhentai.net/g/#{exemple}\n" \
+        "$> urbanity #{exemple}\n"
+  exit
+end
+
+def count_pages
+  link    = "https://nhentai.net/g/#{ARGV[0]}/"
+  client  = Net::HTTP.get_response(URI(link))
+
+  client.body.match(/([0-9]+) pages/)[1].to_i
+end
+
+def create_folder
+  Dir.mkdir(ARGV[0])
+  puts "[#{DONE}] folder #{ARGV[0]} created"
+end
+
+def initiate
+  media_id  = find_media_id
+  link      = "https://i.nhentai.net/galleries/#{media_id}/1.jpg"
+  nb_pages  = count_pages
+  bar       = TTY::ProgressBar.new('downloading [:bar] :current / :total | ETA: :eta',
+                                    total: nb_pages, width: 50, head: '>')
+
+  create_folder if Net::HTTP.get_response(URI(link)).code == '200'
+  (1..nb_pages).each { |page| download(media_id, page, bar) }
+  put_message("[#{FINISHED}]")
+end
+
+def download(media_id, page, bar)
+  link    = "https://i.nhentai.net/galleries/#{media_id}/#{page}.jpg"
+  client  = Net::HTTP.get_response(URI(link))
+
+  File.open("#{ARGV[0]}/#{page}.jpg", 'wb') { |file| file.puts client.body }
+  bar.advance(1)
+end
+
+def find_media_id
+  link    = "https://nhentai.net/g/#{ARGV[0]}/"
+  client  = Net::HTTP.get_response(URI(link))
+  res     = client.body.match(%r{\/([0-9]+)\/cover.jpg})
+
+  return res[1] unless res.nil? || client.code != '200'
+
+  put_message("[#{ERROR}] #{client.code}: #{client.message}")
+end
+
+def put_message(message)
+  puts message
+  exit
+end
+
+print_help if ARGV.empty?
+File.exist?(ARGV[0]) ? put_message("[#{ERROR}] Folder already exist") : initiate
