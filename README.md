@@ -2,6 +2,8 @@
 
 Urbanity is a CLI tool for downloading books from [nhentai.net](https://nhentai.net)
 
+[![asciicast](https://asciinema.org/a/aQbG697C15ywYkIwvziKFBE8g.svg)](https://asciinema.org/a/aQbG697C15ywYkIwvziKFBE8g)
+
 ## Installation
 
 With Bundler
