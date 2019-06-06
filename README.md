@@ -19,8 +19,8 @@ urbanity [ID]
 ```
 
 ## TODO
-**v1.0**
-- [ ] create real ruby API for Urbanity
+**v2.0**
+- [x] used of [nhentai-api](https://github.com/groussel42/nhentai-api)
 - [ ] possibility to use a mirror
 - [ ] rename folder
 - [ ] download a specific range of pages
