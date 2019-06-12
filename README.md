@@ -21,11 +21,14 @@ urbanity [ID]
 ```
 
 ## TODO
-**v2.0**
+**v1.0**
 - [x] used of [nhentai-api](https://github.com/groussel42/nhentai-api)
-- [ ] possibility to use a mirror
-- [ ] rename folder
+- [x] download multiples doujinshi at once
 - [ ] download a specific range of pages
+- [ ] possibility to use a mirror
+
+**v2.0**
+- [ ] rename folder
 - [ ] show a list of doujinshi if no id is given
 - [ ] GUI
 
