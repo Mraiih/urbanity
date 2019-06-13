@@ -38,11 +38,6 @@ def download(doujinshi, page, index, bar, increment)
   bar.tick(percent: increment)
 end
 
-def put_message(message)
-  puts message
-  exit
-end
-
 # MULTIPLES DOUJINSHI
 print_help if ARGV.empty?
 doujinshi_list = ARGV.map { |doujinshi| doujinshi if doujinshi.match(/\d+/) }
