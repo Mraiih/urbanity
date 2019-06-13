@@ -1,27 +1,17 @@
 #!/usr/bin/env ruby
 
-require 'colorize'
 require 'net/http'
-require 'tty-progressbar'
 require 'nhentai-api'
 require 'cli/ui'
 
 CLI::UI::StdoutRouter.enable
 
-# CONSTANTS
-DONE      = 'DONE'.colorize(:green)
-ERROR     = 'ERROR'.colorize(:red)
-FINISHED  = 'DOWNLOAD FINISHED'.colorize(:blue)
-
 # FUNCTIONS
 def print_help
-  exemple = '220794'.colorize(:green)
-  exemple2 = '191049'.colorize(:green)
-
   puts  "Usage: urbanity [ID]\n\n" \
         "Exemple:\n" \
-        "https://nhentai.net/g/#{exemple}\n" \
-        "$> urbanity #{exemple} #{exemple2}\n"
+        "https://nhentai.net/g/220794\n" \
+        "$> urbanity 220794 191049\n"
   exit
 end
 
@@ -29,7 +19,7 @@ def initiate(doujinshi)
   increment = (100 / doujinshi.count_pages.to_f) / 100
 
   # DOWNLOAD FRAME
-  CLI::UI::Frame.open("#{doujinshi.id}", color: :green) do
+  CLI::UI::Frame.open(doujinshi.id.to_s, color: :green) do
     Dir.mkdir(doujinshi.id)
     # PROGRESSE BAR
     CLI::UI::Progress.progress do |bar|
