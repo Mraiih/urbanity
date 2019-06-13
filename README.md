@@ -41,5 +41,3 @@ Urbanity is an anagram for 'Ruby n tai'
 ## Contributors
 
 - [groussel42](https://github.com/groussel42) Gael Roussel - creator, maintainer
-
-rubu urbanity 
