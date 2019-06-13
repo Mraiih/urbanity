@@ -4,7 +4,6 @@ require 'colorize'
 require 'net/http'
 require 'tty-progressbar'
 require 'nhentai-api'
-require 'optparse'
 require 'cli/ui'
 
 CLI::UI::StdoutRouter.enable
@@ -15,12 +14,26 @@ ERROR     = 'ERROR'.colorize(:red)
 FINISHED  = 'DOWNLOAD FINISHED'.colorize(:blue)
 
 # FUNCTIONS
+def print_help
+  exemple = '220794'.colorize(:green)
+  exemple2 = '191049'.colorize(:green)
+
+  puts  "Usage: urbanity [ID]\n\n" \
+        "Exemple:\n" \
+        "https://nhentai.net/g/#{exemple}\n" \
+        "$> urbanity #{exemple} #{exemple2}\n"
+  exit
+end
+
 def initiate(doujinshi)
   increment = (100 / doujinshi.count_pages.to_f) / 100
 
+  # DOWNLOAD FRAME
   CLI::UI::Frame.open("#{doujinshi.id}", color: :green) do
     Dir.mkdir(doujinshi.id)
+    # PROGRESSE BAR
     CLI::UI::Progress.progress do |bar|
+      # DOWNLOAD ALL PAGES
       doujinshi.pages.each_with_index { |page, index| download(doujinshi, page, index + 1, bar, increment) }
       bar.tick(set_percent: 100)
     end
@@ -40,45 +53,15 @@ def put_message(message)
   exit
 end
 
-# ARGUMENTS
-options = {}
-begin
-  OptionParser.new do |opts|
-    opts.banner = "Usage: urbanity [options] [id]"
-
-    opts.on '-r', '--rename [name]', String, 'Define a folder name' do |value|
-      options[:rename] = value
-    end
-
-    opts.on '-f', '--from [page]', Integer, 'Starting range' do |value|
-      options[:from] = value
-    end
-
-    opts.on '-t', '--to [page]', Integer, 'Ending range' do |value|
-      options[:to] = value
-    end
-
-    opts.on '-m', '--mirror [link]', String, 'Use a mirror' do |value|
-      options[:mirror] = value
-    end
-
-    opts.on '-h', '--help', 'Show this help' do
-      puts opts
-      exit
-    end
-  end.parse!
-rescue OptionParser::InvalidOption
-  puts 'Warning: Invalid option'
-  exit
-end
-
 # MULTIPLES DOUJINSHI
+print_help if ARGV.empty?
 doujinshi_list = ARGV.map { |doujinshi| doujinshi if doujinshi.match(/\d+/) }
 
 CLI::UI::Frame.open('Urbanity', color: :cyan) do
   doujinshi_list.each do |id|
     doujinshi = Doujinshi.new(id)
     unless doujinshi.exists?
+      # CREATE ERROR FRAME
       CLI::UI::Frame.open('ERROR', color: :red) do
         puts "This doujinshi does not exist: #{id}"
       end
@@ -86,6 +69,7 @@ CLI::UI::Frame.open('Urbanity', color: :cyan) do
     end
 
     if File.exist?(id)
+      # CREATE ERROR FRAME
       CLI::UI::Frame.open('ERROR', color: :red) do
         puts "Folder #{id} already exist"
       end

@@ -25,14 +25,13 @@ urbanity [ID]
 - [x] used of [nhentai-api](https://github.com/groussel42/nhentai-api)
 - [x] download multiples doujinshi at once
 - [x] new cli design
-- [ ] download a specific range of pages
-- [ ] possibility to use a mirror
 
 **v2.0**
+- [ ] GUI
+- [ ] download a specific range of pages
+- [ ] possibility to use a mirror
 - [ ] rename folder
 - [ ] show a list of doujinshi if no id is given
-- [ ] GUI
-
 ## FAQ
 **Why Urbanity ?**  
 Urbanity is an anagram for 'Ruby n tai'
@@ -41,5 +40,3 @@ Urbanity is an anagram for 'Ruby n tai'
 ## Contributors
 
 - [groussel42](https://github.com/groussel42) Gael Roussel - creator, maintainer
-
-rubu urbanity 
