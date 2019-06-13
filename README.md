@@ -2,7 +2,7 @@
 
 Urbanity is a CLI tool for downloading books from [nhentai.net](https://nhentai.net)
 
-[![asciicast](https://asciinema.org/a/8qEybiLxydd26i7oXX8u1PkJM.svg)](https://asciinema.org/a/8qEybiLxydd26i7oXX8u1PkJM)
+[![asciicast](https://asciinema.org/a/251423.svg)](https://asciinema.org/a/251423)
 
 ## Installation
 
@@ -24,6 +24,7 @@ urbanity [ID]
 **v1.0**
 - [x] used of [nhentai-api](https://github.com/groussel42/nhentai-api)
 - [x] download multiples doujinshi at once
+- [x] new cli design
 - [ ] download a specific range of pages
 - [ ] possibility to use a mirror
 
@@ -40,3 +41,5 @@ Urbanity is an anagram for 'Ruby n tai'
 ## Contributors
 
 - [groussel42](https://github.com/groussel42) Gael Roussel - creator, maintainer
+
+rubu urbanity 

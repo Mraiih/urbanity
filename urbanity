@@ -5,6 +5,9 @@ require 'net/http'
 require 'tty-progressbar'
 require 'nhentai-api'
 require 'optparse'
+require 'cli/ui'
+
+CLI::UI::StdoutRouter.enable
 
 # CONSTANTS
 DONE      = 'DONE'.colorize(:green)
@@ -12,26 +15,24 @@ ERROR     = 'ERROR'.colorize(:red)
 FINISHED  = 'DOWNLOAD FINISHED'.colorize(:blue)
 
 # FUNCTIONS
-def create_folder(id)
-  Dir.mkdir(id)
-  puts "[#{DONE}] folder #{id} created"
-end
-
 def initiate(doujinshi)
-  bar = TTY::ProgressBar.new('downloading [:bar] :current / :total | ETA: :eta',
-                             total: doujinshi.count_pages, width: 50, head: '>')
+  increment = (100 / doujinshi.count_pages.to_f) / 100
 
-  create_folder(doujinshi.id)
-  doujinshi.pages.each_with_index { |page, index| download(doujinshi.id, page, index + 1, bar) }
-  puts "[#{FINISHED}]"
+  CLI::UI::Frame.open("#{doujinshi.id}", color: :green) do
+    Dir.mkdir(doujinshi.id)
+    CLI::UI::Progress.progress do |bar|
+      doujinshi.pages.each_with_index { |page, index| download(doujinshi, page, index + 1, bar, increment) }
+      bar.tick(set_percent: 100)
+    end
+  end
 end
 
-def download(id, page, index, bar)
+def download(doujinshi, page, index, bar, increment)
   client    = Net::HTTP.get_response(URI(page))
   extention = page.slice(page.length - 3..page.length)
 
-  File.open("#{id}/#{index}.#{extention}", 'wb') { |file| file.puts client.body }
-  bar.advance(1)
+  File.open("#{doujinshi.id}/#{index}.#{extention}", 'wb') { |file| file.puts client.body }
+  bar.tick(percent: increment)
 end
 
 def put_message(message)
@@ -74,16 +75,22 @@ end
 # MULTIPLES DOUJINSHI
 doujinshi_list = ARGV.map { |doujinshi| doujinshi if doujinshi.match(/\d+/) }
 
-doujinshi_list.each do |id|
-  doujinshi = Doujinshi.new(id)
-  unless doujinshi.exists?
-    puts "[#{ERROR}] This doujinshi does not exist: #{id}"
-    next
-  end
+CLI::UI::Frame.open('Urbanity', color: :cyan) do
+  doujinshi_list.each do |id|
+    doujinshi = Doujinshi.new(id)
+    unless doujinshi.exists?
+      CLI::UI::Frame.open('ERROR', color: :red) do
+        puts "This doujinshi does not exist: #{id}"
+      end
+      next
+    end
 
-  if File.exist?(id)
-    puts "[#{ERROR}] Folder already exist"
-  else
-    initiate(doujinshi)
+    if File.exist?(id)
+      CLI::UI::Frame.open('ERROR', color: :red) do
+        puts "Folder #{id} already exist"
+      end
+    else
+      initiate(doujinshi)
+    end
   end
 end
